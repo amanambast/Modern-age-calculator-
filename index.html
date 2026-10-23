@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Modern Age Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #eef2ff;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #64748b;
+    --primary: #6366f1;
+    --border: #e2e8f0;
+}
+
+body.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --muted: #cbd5e1;
+    --primary: #818cf8;
+    --border: #334155;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.container {
+    max-width: 650px;
+    margin: 25px auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 10px;
+}
+
+.header h1 {
+    font-size: 25px;
+}
+
+.header p {
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+}
+
+.theme-btn {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.primary-btn {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.reset-btn {
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.error {
+    color: #ef4444;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.result {
+    display: none;
+}
+
+.age-main {
+    text-align: center;
+    padding: 20px 10px;
+    background: var(--bg);
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.age-main .emoji {
+    font-size: 38px;
+}
+
+.age-main h3 {
+    font-size: 36px;
+    color: var(--primary);
+    margin: 12px 0;
+}
+
+.age-main p {
+    color: var(--muted);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.stat strong {
+    font-size: 19px;
+}
+
+.birthday {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 15px;
+    line-height: 1.7;
+}
+
+.footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin: 25px 0;
+}
+
+@media (max-width: 450px) {
+    body { padding: 12px; }
+    .container { margin-top: 12px; }
+    .header h1 { font-size: 20px; }
+    .card { padding: 18px; }
+    .age-main h3 { font-size: 29px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div>
+            <h1>🎂 Age Calculator</h1>
+            <p>Discover your age in seconds.</p>
+        </div>
+
+        <button class="theme-btn" id="themeBtn"
+        type="button" onclick="toggleTheme()">
+            🌙 Theme
+        </button>
+    </header>
+
+    <section class="card">
+        <h2>Calculate Your Age</h2>
+
+        <form id="ageForm">
+            <label for="dob">Enter Your Date of Birth</label>
+
+            <input type="date" id="dob" required>
+
+            <button class="primary-btn" type="submit">
+                Calculate My Age ✨
+            </button>
+
+            <button class="reset-btn" type="reset">
+                Reset
+            </button>
+
+            <p class="error" id="error" role="alert"></p>
+        </form>
+    </section>
+
+    <section class="card result" id="result"
+    aria-live="polite">
+
+        <h2>Your Age Result 🎉</h2>
+
+        <div class="age-main">
+            <div class="emoji">🎈</div>
+            <h3 id="ageText">0 Years</h3>
+            <p>Your age in years, months and days</p>
+        </div>
+
+        <div class="grid">
+            <div class="stat">
+                <span>Total Days Lived</span>
+                <strong id="totalDays">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Total Weeks</span>
+                <strong id="totalWeeks">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Total Months (approx.)</span>
+                <strong id="totalMonths">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Day You Were Born</span>
+                <strong id="birthDay">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>Your Zodiac Sign</span>
+                <strong id="zodiac">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>Next Birthday In</span>
+                <strong id="nextBirthday">-</strong>
+            </div>
+        </div>
+
+        <div class="birthday">
+            🎂 <strong>Next Birthday:</strong>
+            <span id="birthdayDate">-</span>
+            <br>
+            🎉 <strong>Age on Next Birthday:</strong>
+            <span id="nextAge">-</span>
+        </div>
+
+        <button class="primary-btn" type="button"
+        style="margin-top:18px"
+        onclick="copyResult()">
+            📋 Copy Result
+        </button>
+
+        <p class="error" id="copyMessage"></p>
+    </section>
+
+    <footer class="footer">
+        Your date of birth is calculated locally in your browser.
+        <br><br>
+        Made with ❤️ | Age Calculator
+    </footer>
+
+</div>
+
+<script>
+const form = document.getElementById("ageForm");
+const dobInput = document.getElementById("dob");
+const result = document.getElementById("result");
+
+function localDateString(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function dateFromInput(value) {
+    const parts = value.split("-").map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function daysBetween(a, b) {
+    const utcA = Date.UTC(
+        a.getFullYear(), a.getMonth(), a.getDate()
+    );
+    const utcB = Date.UTC(
+        b.getFullYear(), b.getMonth(), b.getDate()
+    );
+
+    return Math.round((utcB - utcA) / 86400000);
+}
+
+function addYearsClamped(date, years) {
+    const year = date.getFullYear() + years;
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    const lastDay = new Date(year, month + 1, 0).getDate();
+
+    return new Date(
+        year, month, Math.min(day, lastDay)
+    );
+}
+
+function addMonthsClamped(date, months) {
+    const first = new Date(
+        date.getFullYear(),
+        date.getMonth() + months,
+        1
+    );
+
+    const lastDay = new Date(
+        first.getFullYear(),
+        first.getMonth() + 1,
+        0
+    ).getDate();
+
+    first.setDate(Math.min(date.getDate(), lastDay));
+    return first;
+}
+
+function zodiacSign(day, month) {
+    const signs = [
+        "Capricorn ♑", "Aquarius ♒", "Pisces ♓",
+        "Aries ♈", "Taurus ♉", "Gemini ♊",
+        "Cancer ♋", "Leo ♌", "Virgo ♍",
+        "Libra ♎", "Scorpio ♏", "Sagittarius ♐"
+    ];
+
+    const cutoffs = [20, 19, 20, 20, 21, 21,
+                     23, 23, 23, 23, 22, 22];
+
+    const index = (day < cutoffs[month - 1])
+        ? month - 1
+        : month;
+
+    return signs[index % 12];
+}
+
+function calculateAge(dob, today) {
+    let years = today.getFullYear() - dob.getFullYear();
+
+    if (addYearsClamped(dob, years) > today) {
+        years--;
+    }
+
+    let cursor = addYearsClamped(dob, years);
+
+    let months = 0;
+
+    while (months < 11) {
+        const next = addMonthsClamped(cursor, 1);
+
+        if (next > today) break;
+
+        cursor = next;
+        months++;
+    }
+
+    const days = daysBetween(cursor, today);
+
+    return { years, months, days };
+}
+
+function getNextBirthday(dob, today) {
+    let year = today.getFullYear();
+
+    let next = addYearsClamped(dob, year - dob.getFullYear());
+
+    if (next < today) {
+        next = addYearsClamped(dob, year + 1 - dob.getFullYear());
+    }
+
+    return next;
+}
+
+dobInput.max = localDateString(new Date());
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const error = document.getElementById("error");
+    error.textContent = "";
+    document.getElementById("copyMessage").textContent = "";
+
+    if (!dobInput.value) {
+        error.textContent = "Please enter your date of birth.";
+        return;
+    }
+
+    const dob = dateFromInput(dobInput.value);
+    const today = dateFromInput(localDateString(new Date()));
+
+    if (isNaN(dob.getTime()) || dob > today) {
+        error.textContent =
+            "Please enter a valid date that is not in the future.";
+        result.style.display = "none";
+        return;
+    }
+
+    const age = calculateAge(dob, today);
+    const totalDays = daysBetween(dob, today);
+    const next = getNextBirthday(dob, today);
+    const daysUntilBirthday = daysBetween(today, next);
+
+    const nextAge = next.getFullYear() - dob.getFullYear();
+
+    document.getElementById("ageText").textContent =
+        `${age.years} Years, ${age.months} Months, ${age.days} Days`;
+
+    document.getElementById("totalDays").textContent =
+        totalDays.toLocaleString("en-IN");
+
+    document.getElementById("totalWeeks").textContent =
+        Math.floor(totalDays / 7).toLocaleString("en-IN");
+
+    document.getElementById("totalMonths").textContent =
+        (age.years * 12 + age.months).toLocaleString("en-IN");
+
+    document.getElementById("birthDay").textContent =
+        dob.toLocaleDateString("en-US", { weekday: "long" });
+
+    document.getElementById("zodiac").textContent =
+        zodiacSign(dob.getDate(), dob.getMonth() + 1);
+
+    document.getElementById("nextBirthday").textContent =
+        daysUntilBirthday === 0
+            ? "Today! 🎉"
+            : `${daysUntilBirthday} Days`;
+
+    document.getElementById("birthdayDate").textContent =
+        next.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+
+    document.getElementById("nextAge").textContent =
+        `${nextAge} Years`;
+
+    result.style.display = "block";
+});
+
+form.addEventListener("reset", function() {
+    result.style.display = "none";
+    document.getElementById("error").textContent = "";
+    document.getElementById("copyMessage").textContent = "";
+});
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    const dark = document.body.classList.contains("dark");
+
+    document.getElementById("themeBtn").textContent =
+        dark ? "☀️ Theme" : "🌙 Theme";
+
+    try {
+        localStorage.setItem("ageCalculatorDark", dark ? "yes" : "no");
+    } catch (e) {}
+}
+
+try {
+    if (localStorage.getItem("ageCalculatorDark") === "yes") {
+        document.body.classList.add("dark");
+        document.getElementById("themeBtn").textContent = "☀️ Theme";
+    }
+} catch (e) {}
+
+async function copyResult() {
+    const text =
+        "My Age Calculator Result\n" +
+        "Age: " + document.getElementById("ageText").textContent + "\n" +
+        "Total Days: " + document.getElementById("totalDays").textContent + "\n" +
+        "Total Weeks: " + document.getElementById("totalWeeks").textContent + "\n" +
+        "Birth Day: " + document.getElementById("birthDay").textContent + "\n" +
+        "Zodiac: " + document.getElementById("zodiac").textContent + "\n" +
+        "Next Birthday: " + document.getElementById("birthdayDate").textContent + "\n" +
+        "Birthday Countdown: " + document.getElementById("nextBirthday").textContent;
+
+    const message = document.getElementById("copyMessage");
+
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const area = document.createElement("textarea");
+            area.value = text;
+            area.style.position = "fixed";
+            area.style.opacity = "0";
+            document.body.appendChild(area);
+            area.select();
+
+            const copied = document.execCommand("copy");
+            area.remove();
+
+            if (!copied) throw new Error("Copy failed");
+        }
+
+        message.textContent = "Result copied successfully! ✅";
+    } catch (e) {
+        message.textContent = "Copy failed. Please try again.";
+    }
+}
+</script>
+
+</body>
+</html>
